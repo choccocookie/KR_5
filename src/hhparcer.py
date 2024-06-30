@@ -23,18 +23,7 @@ class HH(Parser):
     def __init__(self):
         self.headers = {'User-Agent': 'HH-User-Agent'}
         self.params = {'page': 0, 'per_page': 10, 'sort_by': 'by_vacancies_open'}
-        self.companies_data = {
-            'Тиньков': 78638,
-            'Яндекс': 1740,
-            'Билайн': 4934,
-            'Сбербанк': 1473866,
-            'Банк ВТБ': 4181,
-            'Газпромнефть': 39305,
-            'Альфа-банк': 80,
-            'СберТех': 3529,
-            'ФинТех IQ': 5898393,
-            'Айтеко': 872178
-        }
+
 
     def __get_requests(self):
         """
@@ -44,16 +33,6 @@ class HH(Parser):
         if response.status_code == 200:
             return response.json()['items']
 
-    def get_employers(self):
-        """
-        Проходит по списку вакансий и делает выборку id, name, url работодателей
-        :return:
-        """
-        employers = []
-        data = self.__get_requests()
-        for employer in data:
-            employers.append({"id": employer["id"], "name": employer["name"], "url": employer["alternate_url"]})
-        return employers
 
     def get_companies(self):
         """
@@ -108,18 +87,10 @@ class HH(Parser):
 
         return all_vacancies
 
-    def load_vacancies(self, companies):
-        """Получает ID компании, по которому будет производится поиск по ссылке,
-        циклично забирает данные по ссылке с переменной company_id и добвляет их в словарь self.vacancies"""
-
-        for co in companies:
-            company_id = co['company_id']
-            response = requests.get(f"https://api.hh.ru/vacancies?employer_id={company_id}", headers=self.headers,
-                                    params=self.params)
-            self.vacancies = response.json()['items']
-        return self.vacancies
 
 
-hh = HH()
-hh.get_employers()
-hh.get_all_vacancies()
+
+
+# hh = HH()
+# hh.get_employers()
+# hh.get_all_vacancies()
