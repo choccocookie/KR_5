@@ -1,6 +1,4 @@
-#import config
 import requests
-import json
 from abc import ABC, abstractmethod
 #from vacanсy import Vacancy
 
@@ -54,7 +52,7 @@ class HH(Parser):
         employers = []
         data = self.__get_requests()
         for employer in data:
-            employers.append({"id": employer["id"], "name": employer["name"], "url": employer["url"]})
+            employers.append({"id": employer["id"], "name": employer["name"], "url": employer["alternate_url"]})
         return employers
 
     def get_companies(self):
@@ -97,12 +95,17 @@ class HH(Parser):
                 else:
                     salary_from = vacancy["salary"]["from"] if vacancy["salary"]["from"] else 0
                     salary_to = vacancy["salary"]["to"] if vacancy["salary"]["to"] else 0
-                all_vacancies.append({"id": vacancy["id"], "name": vacancy["name"],
+                all_vacancies.append({"id": vacancy["id"],
+                                      "name": vacancy["name"],
                                       "url": vacancy["alternate_url"],
                                       "salary_from": salary_from,
                                       "salary_to": salary_to,
                                       "employer": employer["id"],
-                                      "area":vacancy["area"]["name"]})
+                                      "area": vacancy["area"]["name"],
+                                      "description": vacancy["snippet"]["responsibility"],
+                                      "requirement": vacancy["snippet"]["requirement"]}
+                                      )
+
         return all_vacancies
 
     def load_vacancies(self, companies):
@@ -118,4 +121,5 @@ class HH(Parser):
 
 
 hh = HH()
-print(hh.get_employers())
+hh.get_employers()
+hh.get_all_vacancies()

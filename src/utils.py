@@ -1,11 +1,8 @@
 import psycopg2
-from HHparcer import HH
+from hhparcer import HH
 from config import config
 
-
 params = config()
-
-
 
 def create_database(name, params):
     """Создание базы данных """
