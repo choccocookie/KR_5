@@ -32,14 +32,35 @@ class DBManager:
         self.cur.execute(query)
         return self.cur.fetchall()
 
-    def get_avg_salary():
-        """получает среднюю зарплату по вакансиям"""
+    def get_avg_salary(self):
+        """получает среднюю зарплату по вакансиям, округляет до целого числа"""
+        query = """
+                SELECT AVG(salary_from) FROM vacancies
+                """
+        self.cur.execute(query)
+        result = self.cur.fetchall()[0][0]
+        return int(result)
 
-    def get_vacancies_with_higher_salary():
+    def get_vacancies_with_higher_salary(self):
         """получает список всех вакансий, у которых зарплата выше средней по всем вакансиям"""
+        query = """
+                SELECT * FROM vacancies
+                WHERE salary_from > (SELECT AVG(salary_from) FROM vacancies)
+                """
+        self.cur.execute(query)
+        return self.cur.fetchall()
 
-    def get_vacancies_with_keyword():
+    def get_vacancies_with_keyword(self, keyword):
         """получает список всех вакансий, в названии которых содержатся переданные в метод слова, например python"""
+        query = """
+                SELECT * FROM vacancies
+                WHERE LOWER(vacancy_name) LIKE %s
+                """
+        self.cur.execute(query, ('%' + keyword.lower() + '%',))
+        return self.cur.fetchall()
 
 db=DBManager("vac", params)
-print(db.get_companies_and_vacancies_count())
+#print(db.get_companies_and_vacancies_count())
+#print(db.get_avg_salary())
+#print(db.get_vacancies_with_higher_salary())
+
